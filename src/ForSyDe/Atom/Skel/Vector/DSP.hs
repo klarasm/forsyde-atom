@@ -171,6 +171,7 @@ fir coefs = V.reverse . V.farm11 applyFilter . tails . V.reverse
 -- <ForSyDe-Atom.html#ungureanu20a [Ungureanu20a]> for a discussion on the relation
 -- between 'fir' and 'fir''.
 --
+-- >>> import qualified ForSyDe.Atom.MoC.SY as SY
 -- >>> let c = vector [1,2,3]
 -- >>> let s = SY.signal [1,0,0,0,0,0,0,0]
 -- >>> fir' (SY.comb21 (+)) (\c -> SY.comb11 (*c)) (SY.delay 0) c s

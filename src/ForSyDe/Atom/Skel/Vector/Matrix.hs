@@ -273,7 +273,7 @@ stencil r c = arrange . groupCols . groupRows
     groupRows =         V.farm11 (V.take r) . dropFromEnd r . V.tails
     groupCols = farm11 (V.farm11 (V.take c) . dropFromEnd c . V.tails)
     arrange   = V.farm11 transpose
-    dropFromEnd n v = V.take (V.length v - n) v
+    dropFromEnd n v = V.take (V.length v - n + 1) v
 
 -- | Reverses the order of elements in a matrix
 --

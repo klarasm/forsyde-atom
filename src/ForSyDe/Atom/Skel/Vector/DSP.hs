@@ -88,10 +88,10 @@ dotvv' wrap a b
 -- | Higher order version of 'dotvm'. Implements the template for a dot operation
 -- between a vector and a matrix.
 --
--- >>> let mA = vector [vector[1,-1,1],  vector[1,-1,-1],  vector[1,1,-1],  vector[1,1,1]]
--- >>> let y  = vector[1,0,0,0]
--- >>> dotVecMat (+) (*) mA y
--- <1,1,1,1>
+-- >>> let mA = vector [vector[1,-1,1,1],  vector[1,-1,-1,1],  vector[1,1,-1,1],  vector[1,1,1,1]]
+-- >>> let y  = vector[1,1,1,1]
+-- >>> dotvm' (+) (*) y mA
+-- <4,0,0,4>
 dotvm' :: (b -> b -> b)     -- ^ kernel function for a row/column reduction, e.g. @(+)@ for dot product
        -> (a -> b -> b)     -- ^ binary operation for pair-wise elements, e.g. @(*)@ for dot product
        -> Vector a          -- ^ /length/ = @xa@

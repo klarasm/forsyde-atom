@@ -155,9 +155,9 @@ blackman size = V.farm11 func $ V.vector [0..size-1]
 -- | Moving average filter (FIR) on numbers, applied in reverse order (more
 -- optimized).
 --
--- >>> let v = vector [0,0,0,0,0,1]
--- >>> let c = vector [1,2,3]
--- >>> fir c
+-- >>> let v = vector [0,0,0,1,0,0]
+-- >>> let c = vector [3,2,1]
+-- >>> fir c v
 -- <0,0,0,3,2,1>
 fir :: Num a
     => Vector a  -- ^ vector of coefficients

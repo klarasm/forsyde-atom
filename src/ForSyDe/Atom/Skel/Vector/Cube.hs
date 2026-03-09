@@ -164,9 +164,9 @@ reduce f = V.reduce f . V.farm11 (M.reduce f)
 
 -- | Returns the element of a matrix at a certain position.
 --
--- >>> let m = matrix 3 3 [1,2,3,11,12,13,21,22,23]
--- >>> at 2 1 m
--- 13
+-- >>> let m = cube 3 3 3 [1,2,3,11,12,13,21,22,23, 11,12,13,111,112,113,121,122,123, 21,22,23,211,212,213,221,222,223]
+-- >>> get 1 2 3 m
+-- Just 211
 get :: Int       -- ^ X index starting from zero
     -> Int       -- ^ Y index starting from zero
     -> Int       -- ^ Z index starting from zero

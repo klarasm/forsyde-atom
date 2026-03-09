@@ -105,10 +105,17 @@ fanout n = V.fanout $ V.fanout $ V.fanout n
 -- example below).
 --
 -- >>> pretty " " $ take 3 4 2 indexes 
--- (0,0) (1,0) (2,0)
--- (0,1) (1,1) (2,1)
--- (0,2) (1,2) (2,2)
--- (0,3) (1,3) (2,3)
+-- --------
+-- (0,0,0) (1,0,0) (2,0,0)
+-- (0,1,0) (1,1,0) (2,1,0)
+-- (0,2,0) (1,2,0) (2,2,0)
+-- (0,3,0) (1,3,0) (2,3,0)
+-- --------
+-- (0,0,1) (1,0,1) (2,0,1)
+-- (0,1,1) (1,1,1) (2,1,1)
+-- (0,2,1) (1,2,1) (2,2,1)
+-- (0,3,1) (1,3,1) (2,3,1)
+-- --------
 indexes :: Cube (Int, Int, Int)
 indexes = farm31 (,,) colix rowix depthix
   where
@@ -156,9 +163,9 @@ farm31 f = V.farm31 (V.farm31 (V.farm31 f))
 -- | Reduces all the elements of a cube to one element based on a
 -- binary function.
 --
--- >>> let m = cube 3 3 [1,2,3,11,12,13,21,22,23]
+-- >>> let m = cube 3 3 2 [1,2,3,11,12,13,21,22,23, 11,12,13,111,112,113,121,122,123]
 -- >>> reduce (+) m
--- 108
+-- 846
 reduce :: (a -> a -> a) -> Cube a -> a
 reduce f = V.reduce f . V.farm11 (M.reduce f)
 
@@ -179,10 +186,12 @@ get x y z = getMaybe . V.get z
 -- | Returns the upper-left part of a matrix until a specific
 -- position.
 --
--- >>> let m = matrix 4 4 [1,2,3,4,11,12,13,14,21,22,23,24,31,32,33,34]
--- >>> pretty " " $ take 2 2 m
+-- >>> let m = cube 4 4 2 [1,2,3,4,11,12,13,14,21,22,23,24,31,32,33,34, 11,12,13,14,111,112,113,114,121,122,123,124,131,132,133,134]
+-- >>> pretty " " $ take 2 2 1 m
+-- --------
 --  1  2
 -- 11 12
+-- --------
 take :: Int       -- ^ X index starting from zero
      -> Int       -- ^ Y index starting from zero
      -> Int       -- ^ > index starting from zero
@@ -193,10 +202,12 @@ take x y z = V.farm11 (M.take x y) . V.take z
 -- | Returns the upper-left part of a matrix until a specific
 -- position.
 --
--- >>> let m = matrix 4 4 [1,2,3,4,11,12,13,14,21,22,23,24,31,32,33,34]
--- >>> pretty " " $ drop 2 2 m
--- 23 24
--- 33 34
+-- >>> let m = cube 4 4 2 [1,2,3,4,11,12,13,14,21,22,23,24,31,32,33,34, 11,12,13,14,111,112,113,114,121,122,123,124,131,132,133,134]
+-- >>> pretty " " $ drop 2 2 1 m
+-- --------
+-- 123 124
+-- 133 134
+-- --------
 drop :: Int       -- ^ X index starting from zero
      -> Int       -- ^ Y index starting from zero
      -> Int       -- ^ Z index starting from zero

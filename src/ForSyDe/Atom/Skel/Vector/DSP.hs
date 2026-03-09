@@ -226,7 +226,7 @@ fft' butterfly k vs | n == 2^k = bitrev $ (stage `V.pipe1` (V.iterate k (*2) 2))
 -- >>> duals $ vector [1,2,3,4,5,6,7]
 -- (<1,2,3>,<4,5,6>)
 duals    :: Vector a -> (Vector a, Vector a)
-duals v  = (V.take k v, V.drop k v)
+duals v  = (V.take k v, V.take k $ V.drop k v)
   where k = V.length v `div` 2
 
 -- | concatenates a previously split vector. See also 'duals'

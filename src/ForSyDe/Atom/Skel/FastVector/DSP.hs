@@ -156,7 +156,7 @@ fft' butterfly k vs | n == 2^k = bitrev $ (stage `V.pipe1` (V.iterate k (*2) 2))
 
 -- | See 'ForSyDe.Atom.Skel.Vector.DSP.duals'.
 duals    :: Vector a -> (Vector a, Vector a)
-duals v  = (V.take k v, V.drop k v)
+duals v  = (V.take k v, V.take k $ V.drop k v)
   where
     k = V.length v `div` 2
 

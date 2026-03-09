@@ -541,6 +541,7 @@ first = S.first
 last  :: Vector a -> a
 last  = S.last
 
+
 -- | Returns the tail of a vector.
 --
 -- >>> tail $ vector [1,2,3,4,5]
@@ -710,6 +711,13 @@ group n v = reducei1 sel Null indexes . S.farm11 (unit . unit) $ v
   where sel i x y
           | i `mod` n == 0 = x <++> y
           | otherwise      = (S.first x <++> first' y) :> tail' y
+
+-- | Returns the n-sized neighborhood of each element that has at least n neighbors in every direction
+--
+-- >>> stencil 3 $ vector [1,2,3,4,5]
+-- <<1,2,3>,<2,3,4>,<3,4,5>>
+stencil n v = S.farm11 (take n) $ dropFromEnd n $ tails v
+  where dropFromEnd n = take (length v - n + 1)
 
 -- | right-shifts a vector with an element.
 --

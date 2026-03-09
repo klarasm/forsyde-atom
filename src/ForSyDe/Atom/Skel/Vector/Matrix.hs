@@ -231,7 +231,7 @@ drop x y = V.farm11 (V.drop x) . V.drop y
 -- 11 12 13 14
 -- 21 22 23 24
 -- 31 32 33 34
--- >>> pretty " " $ cropMat 2 3 1 1 m
+-- >>> pretty " " $ crop 2 3 1 1 m
 -- 12 13
 -- 22 23
 -- 32 33

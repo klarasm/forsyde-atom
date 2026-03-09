@@ -17,6 +17,7 @@ module ForSyDe.Atom.Skel.Vector.Cube where
 import ForSyDe.Atom.Skel.Vector (Vector(..), vector, fromVector, (<++>))
 import ForSyDe.Atom.Skel.Vector.Matrix (Matrix, matrix, fromMatrix)
 
+import Prelude hiding (take, drop, reverse)
 import qualified Data.List as L
 import qualified ForSyDe.Atom.Skel.Vector as V
 import qualified ForSyDe.Atom.Skel.Vector.Matrix as M

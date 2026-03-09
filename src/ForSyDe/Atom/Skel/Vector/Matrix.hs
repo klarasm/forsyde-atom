@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 module ForSyDe.Atom.Skel.Vector.Matrix where
 
-import Prelude hiding (take, drop)
+import Prelude hiding (take, drop, reverse)
 import qualified Data.List as L
 import ForSyDe.Atom.Skel.Vector (Vector(..), vector, fromVector, (<++>))
 import qualified ForSyDe.Atom.Skel.Vector as V

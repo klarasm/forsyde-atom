@@ -187,8 +187,8 @@ dot f g m = V.farm11 (dotV f g m) . transpose
 -- | Returns the element of a matrix at a certain position.
 --
 -- >>> let m = matrix 3 3 [1,2,3,11,12,13,21,22,23]
--- >>> at 2 1 m
--- 13
+-- >>> get 3 2 m
+-- Just 13
 get :: Int       -- ^ X index starting from zero
     -> Int       -- ^ Y index starting from zero
     -> Matrix a

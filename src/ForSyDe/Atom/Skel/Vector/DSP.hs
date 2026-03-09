@@ -105,7 +105,7 @@ dotvm' f g vs = V.reduce (V.farm21 f) . V.farm21 (\x -> V.farm11 (g x)) vs
 --
 -- >>> let mA = vector [vector[1,-1,1],  vector[1,-1,-1],  vector[1,1,-1],  vector[1,1,1]]
 -- >>> let y  = vector[1,0,0,0]
--- >>> dotVecMat (+) (*) mA y
+-- >>> dotmv' (+) (*) mA y
 -- <1,1,1,1>
 dotmv' :: (a -> a -> a)
        -- ^ kernel function for a row/column reduction, e.g. @(+)@ for dot product

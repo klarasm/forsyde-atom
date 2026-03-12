@@ -6,7 +6,7 @@ import Data.Maybe
 import Control.Applicative
 import Data.List.Split
 import qualified Data.List as L
-import Prelude hiding (take, drop, length, zip, unzip)
+import Prelude hiding (take, drop, last, length, zip, unzip)
 
 
 -- | In this library 'Vector' is just a wrapper around a list.
@@ -61,6 +61,9 @@ take n = unsafeLift (L.take n)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.first'.
 first = unsafeApply L.head
+--
+-- | See 'ForSyDe.Atom.Skel.Vector.first'.
+last = unsafeApply L.last
 
 -- | See 'ForSyDe.Atom.Skel.Vector.group'.
 group :: Int -> Vector a -> Vector (Vector a)
@@ -75,6 +78,31 @@ fanoutn n = vector . L.replicate n
 -- | See 'ForSyDe.Atom.Skel.Vector.stencil'.
 stencil n v = farm11 (take n) $ dropFromEnd n $ tails v
   where dropFromEnd n = take (length v - n + 1)
+
+-- | Pad the boundary with n duplicates of e
+--
+-- >>> padConst 2 0 $ vector [1,2,3,4,5]
+-- <0,0,1,2,3,4,5,0,0>
+padConst e n v = padding <++> v <++> padding
+  where padding = fanoutn n e
+
+-- | Pad the boundary with n duplicates of border
+--
+-- >>> padDup 2 $ vector [1,2,3,4,5]
+-- <1,1,1,2,3,4,5,5,5>
+padDup :: Int -> Vector a -> Vector a
+padDup n v = left <++> v <++> right
+  where left = fanoutn n $ first v
+        right = fanoutn n $ last v
+
+-- | Pad the boundary with n elements cyclically of opposite boundary
+--
+-- >>> padCycl 2 $ vector [1,2,3,4,5]
+-- <4,5,1,2,3,4,5,1,2>
+padCycl n v = left <++> v <++> right
+  where s = length v
+        left = take n $ drop (s - n) v
+        right = take n v
 
 -- | See 'ForSyDe.Atom.Skel.Vector.tails'.
 tails = unsafeLift (L.init . map vector . L.tails)

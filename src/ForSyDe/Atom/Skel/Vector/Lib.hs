@@ -719,6 +719,30 @@ group n v = reducei1 sel Null indexes . S.farm11 (unit . unit) $ v
 stencil n v = S.farm11 (take n) $ dropFromEnd n $ tails v
   where dropFromEnd n = take (length v - n + 1)
 
+-- | Pad the boundary with n duplicates of e
+--
+-- >>> padConst 2 0 $ vector [1,2,3,4,5]
+-- <0,0,1,2,3,4,5,0,0>
+padConst e n v = padding <++> v <++> padding
+  where padding = fanoutn n e
+
+-- | Pad the boundary with n duplicates of border
+--
+-- >>> padDup 2 $ vector [1,2,3,4,5]
+-- <1,1,1,2,3,4,5,5,5>
+padDup n v = left <++> v <++> right
+  where left = fanoutn n $ S.first v
+        right = fanoutn n $ S.last v
+
+-- | Pad the boundary with n elements cyclically of opposite boundary
+--
+-- >>> padCycl 2 $ vector [1,2,3,4,5]
+-- <4,5,1,2,3,4,5,1,2>
+padCycl n v = left <++> v <++> right
+  where s = length v
+        left = take n $ drop (s - n) v
+        right = take n v
+
 -- | right-shifts a vector with an element.
 --
 -- >>> vector [1,2,3,4] `shiftr` 8

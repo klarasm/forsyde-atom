@@ -116,7 +116,7 @@ module ForSyDe.Atom.Skel.Vector (
   -- use of the vector constructors.
 
   first, last, inits, tails, init, tail,
-  concat, reverse, group, stencil, shiftr, shiftl, rotr, rotl, rotate,
+  concat, reverse, group, stencil, padConst, padDup, padCycl, shiftr, shiftl, rotr, rotl, rotate,
   take, drop, takeWhile, filterIdx, odds, evens, stride,
   get, (<@), (<@!), gather1, gather2, gather3, gather4, gather5,
   (<@>), (<<@>>), (<<<@>>>), (<<<<@>>>>), (<<<<<@>>>>>),

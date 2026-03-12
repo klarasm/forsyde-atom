@@ -182,6 +182,48 @@ stencil r c = arrange . groupCols . groupRows
     arrange   = V.farm11 transpose
     dropFromEnd n v = V.take (V.length v - n + 1) v
 
+-- | Pad the matrix with r row elements and c column elements of e
+--
+-- >>> padConst 2 1 0 $ matrix 2 2 [1,2,3,4]
+-- <<0,0,0,0,0,0>,<0,0,1,2,0,0>,<0,0,3,4,0,0>,<0,0,0,0,0,0>>
+padConst :: a -> Int -> Int -> Vector (Vector a) -> Vector (Vector a)
+padConst e r c m = colPadding <++> middle <++> colPadding
+  where
+    s = 2 * r + (V.length $ V.first m :: Int)
+    middle = V.farm11 padRow m
+    padRow row = rowPadding <++> row <++> rowPadding
+    rowPadding = V.fanoutn r e
+    colPadding = V.fanoutn c $ V.fanoutn s e
+
+-- | Pad the matrix with r row elements and c column elements of the closest neighbor
+--
+-- >>> padDup 2 1 $ matrix 2 2 [1,2,3,4]
+-- <<1,1,1,2,2,2>,<1,1,1,2,2,2>,<3,3,3,4,4,4>,<3,3,3,4,4,4>>
+padDup :: Int -> Int -> Vector (Vector a) -> Vector (Vector a)
+padDup r c m = top <++> middle <++> bottom
+  where
+    top = V.fanoutn c $ V.first middle
+    bottom = V.fanoutn c $ V.last middle
+    middle = V.farm11 padRow m
+    padRow row = left <++> row <++> right
+      where left = V.fanoutn r $ V.first row
+            right = V.fanoutn r $ V.last row
+
+-- | Pad the matrix with r row elements and c column elements cyclically from the opposite boundary
+--
+-- >>> padCycl 2 1 $ matrix 2 2 [1,2,3,4]
+-- <<3,4,3,4,3,4>,<1,2,1,2,1,2>,<3,4,3,4,3,4>,<1,2,1,2,1,2>>
+padCycl :: Int -> Int -> Vector (Vector a) -> Vector (Vector a)
+padCycl r c m = top <++> middle <++> bottom
+  where
+    (w, h) = size m
+    top = V.take c $ V.drop (h - c) middle
+    bottom = V.take c middle
+    middle = V.farm11 padRow m
+    padRow row = left <++> row <++> right
+      where left = V.take r $ V.drop (w - r) row
+            right = V.take r row
+
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.reverse'.
 reverse :: Matrix a -> Matrix a
 reverse = V.reverse . V.farm11 V.reverse

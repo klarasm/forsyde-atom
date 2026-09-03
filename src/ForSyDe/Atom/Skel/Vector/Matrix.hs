@@ -277,7 +277,7 @@ stencil r c = arrange . groupCols . groupRows
 
 -- | Pad the matrix with r row elements and c column elements of e
 --
--- >>> padConst 2 1 0 $ matrix 2 2 [1,2,3,4]
+-- >>> padConst 0 2 1 $ matrix 2 2 [1,2,3,4]
 -- <<0,0,0,0,0,0>,<0,0,1,2,0,0>,<0,0,3,4,0,0>,<0,0,0,0,0,0>>
 padConst :: a -> Int -> Int -> Vector (Vector a) -> Vector (Vector a)
 padConst e r c m = colPadding <++> middle <++> colPadding

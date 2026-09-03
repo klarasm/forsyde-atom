@@ -721,7 +721,7 @@ stencil n v = S.farm11 (take n) $ dropFromEnd n $ tails v
 
 -- | Pad the boundary with n duplicates of e
 --
--- >>> padConst 2 0 $ vector [1,2,3,4,5]
+-- >>> padConst 0 2 $ vector [1,2,3,4,5]
 -- <0,0,1,2,3,4,5,0,0>
 padConst e n v = padding <++> v <++> padding
   where padding = fanoutn n e

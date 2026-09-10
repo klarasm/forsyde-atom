@@ -5,6 +5,7 @@ import Prelude hiding (take, drop)
 import qualified Data.List as L
 import ForSyDe.Atom.Skel.FastVector (Vector(..), vector, fromVector, (<++>))
 import qualified ForSyDe.Atom.Skel.FastVector as V
+import qualified Data.Sequence as Seq
 
 -- | 'Matrix' is simply a type synonym for vector of vectors. This
 -- means that /any/ function on 'Vector' works also on 'Matrix'.
@@ -32,8 +33,8 @@ pretty sep mat = mapM_ putStrLn $ fromVector $ printMat maxWdt strMat
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.isNull'.
 isNull :: Matrix a -> Bool
-isNull (Vector []) = True
-isNull (Vector [Vector []]) = True
+isNull (Vector Seq.Empty) = True
+isNull (Vector (Vector Seq.Empty Seq.:<| Seq.Empty)) = True
 isNull _ = False
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.size'.
@@ -45,9 +46,9 @@ size m = (x,y)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.wellFormed'.
 wellFormed :: Matrix a -> Matrix a
-wellFormed (Vector []) = Vector []
-wellFormed m@(Vector (_ : [])) = m
-wellFormed m@(Vector (x:xs))
+wellFormed (Vector Seq.Empty) = Vector Seq.Empty
+wellFormed m@(Vector (_ Seq.:<| Seq.Empty)) = m
+wellFormed m@(Vector (x Seq.:<| xs))
   | all (\r -> V.length r == V.length x) xs = m
   | otherwise = error "matrix ill-formed: rows are of unequal lengths"
 
@@ -77,15 +78,17 @@ fromMatrix :: Matrix a -- ^ /size/ = @(x,y)@
 fromMatrix = concatMap fromVector . fromVector
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.fanout'.
-fanout :: a -> Matrix a
-fanout n = V.fanout $ V.fanout n
+fanoutn :: Int -> a -> Matrix a
+fanoutn n v = V.fanoutn n $ V.fanoutn n v
+
+fanout = fanoutn (maxBound :: Int)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.indexes'.
-indexes :: Matrix (Int, Int)
-indexes = farm21 (,) colix rowix
-  where
-    colix = vector $ repeat $ vector [0..]
-    rowix = transpose colix
+-- indexes :: Matrix (Int, Int)
+-- indexes = farm21 (,) colix rowix
+--   where
+--     colix = vector $ repeat $ vector [0..]
+--     rowix = transpose colix
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Matrix.farm11'.
 farm11 :: (a -> b)

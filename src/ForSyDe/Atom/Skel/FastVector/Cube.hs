@@ -6,6 +6,8 @@ import ForSyDe.Atom.Skel.FastVector.Matrix (Matrix, matrix, fromMatrix)
 import qualified ForSyDe.Atom.Skel.FastVector as V
 import qualified ForSyDe.Atom.Skel.FastVector.Matrix as M
 
+import qualified Data.Sequence as Seq
+
 -- | 'Cube' is simply a type synonym for vector of vectors. This
 -- means that /any/ function on 'Vector' works also on 'Cube'.
 type Cube a = Vector (Vector (Vector a))
@@ -29,9 +31,10 @@ pretty :: Show a
 pretty sep mat = mapM_ (\m -> putStrLn "--------" >> M.pretty sep m) mat >> putStrLn "--------"
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.isNull'.
-isNull :: Matrix a -> Bool
-isNull (Vector []) = True
-isNull (Vector [Vector []]) = True
+isNull :: Cube a -> Bool
+isNull (Vector Seq.Empty) = True
+isNull (Vector (Vector Seq.Empty Seq.:<| Seq.Empty)) = True
+isNull (Vector ((Vector (Vector Seq.Empty Seq.:<| Seq.Empty)) Seq.:<| Seq.Empty)) = True
 isNull _ = False
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.size'.
@@ -44,9 +47,9 @@ size m = (x,y,z)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.wellFormed'.
 wellFormed :: Cube a -> Cube a
-wellFormed (Vector []) = Vector []
-wellFormed (Vector (x:xs)) = Vector $ M.wellFormed x :
-                             (fromVector $ wellFormed $ Vector xs)
+wellFormed (Vector Seq.Empty) = Vector Seq.Empty
+wellFormed (Vector (x Seq.:<| xs)) = Vector $ M.wellFormed x Seq.:<|
+                             (seqFromVector $ wellFormed $ Vector xs)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.cube'.
 cube :: Int      -- ^ number of columns (X dimension) @= x@
@@ -69,19 +72,21 @@ fromCube = concatMap fromVector . fromMatrix
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.unit'.
 unit :: a -> Cube a -- ^ /size/ = @(1,1)@
-unit a = Vector [Vector [Vector [a]]]
+unit a = Vector (Seq.singleton (Vector (Seq.singleton (Vector (Seq.singleton a)))))
 
--- | See 'ForSyDe.Atom.Skel.Vector.Cube.fanout'.
-fanout :: a -> Cube a
-fanout n = V.fanout $ V.fanout $ V.fanout n
+-- | See 'ForSyDe.Atom.Skel.Vector.Cube.fanoutn'.
+fanoutn :: Int -> a -> Cube a
+fanoutn n v = V.fanoutn n $ V.fanoutn n $ V.fanoutn n v
+
+fanout = fanoutn (maxBound :: Int)
 
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.indexes'.
-indexes :: Cube (Int, Int, Int)
-indexes = farm31 (,,) colix rowix depthix
-  where
-    colix = vector $ repeat $ vector $ repeat $ vector [0..]
-    rowix = V.farm11 M.transpose colix
-    depthix =  M.transpose $ V.farm11 M.transpose colix
+-- indexes :: Cube (Int, Int, Int)
+-- indexes = farm31 (,,) colix rowix depthix
+--   where
+--     colix = vector $ repeat $ vector $ repeat $ vector [0..]
+--     rowix = V.farm11 M.transpose colix
+--     depthix =  M.transpose $ V.farm11 M.transpose colix
     
 -- | See 'ForSyDe.Atom.Skel.Vector.Cube.transpose'.
 transpose :: Cube a -- ^ dimensions @(Z,Y,X)@

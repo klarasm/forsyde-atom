@@ -6,6 +6,7 @@ import qualified Data.Number.FixedFunctions as F
 import ForSyDe.Atom.MoC as MoC
 import ForSyDe.Atom.Skel.FastVector.Lib as V hiding (duals, unduals)
 import ForSyDe.Atom.Skel.FastVector.Matrix as M
+import qualified Data.Sequence as Seq
 import ForSyDe.Atom ((><))
 
 
@@ -79,7 +80,7 @@ dotvm' f g vs = V.reduce (V.farm21 f) . V.farm21 (\x -> V.farm11 (g x)) vs
 hanning :: (Floating n) 
         => Int -- ^ The length of the window
         -> Vector n
-hanning size = V.farm11 func $ V.vector [0..size-1]
+hanning size = V.farm11 func $ V.vector $ [0..size-1]
   where
     func idx = let i = fromIntegral idx
                    n = fromIntegral size
@@ -112,7 +113,7 @@ fir :: Num a
     -> Vector a  -- ^ output vector of numbers; /size/ = @n@
 fir coefs = V.reverse . V.farm11 applyFilter . tails . V.reverse
   where
-    applyFilter = V.reduce (+) . V.farm21 (*) coefs 
+    applyFilter = V.reduce (+) . V.farm21 (*) coefs
 
 -- | See 'ForSyDe.Atom.Skel.Vector.DSP.fir''.
 fir' :: (a -> a -> a)  -- ^ process/operation replacing '+'
@@ -128,7 +129,7 @@ fir' plus times delay coefs =
 
 -- | See 'ForSyDe.Atom.Skel.Vector.DSP.twiddles'.
 twiddles :: Floating a => Int -> V.Vector (Complex a)
-twiddles bN = (bitrev . V.take (bN `div` 2)) (V.farm11 bW $ vector [0..])
+twiddles bN = (bitrev . V.take (bN `div` 2)) (V.farm11 bW $ V.iterate bN (1+) 0)
   where bW x = (cis . negate) (-2 * pi * fromIntegral x / fromIntegral bN)
 
 
@@ -167,6 +168,6 @@ unduals x y =  x <++> y
 -- | See 'ForSyDe.Atom.Skel.Vector.DSP.bitrev'.
 bitrev = V.unsafeLift bitrevF
   where
-    bitrevF [x] = [x]
-    bitrevF xs  = bitrevF (V.evensF xs) ++ bitrevF (V.oddsF xs)
+    bitrevF v@(x Seq.:<| Seq.Empty) = v
+    bitrevF xs  = bitrevF (V.evensF xs) <> bitrevF (V.oddsF xs)
 
